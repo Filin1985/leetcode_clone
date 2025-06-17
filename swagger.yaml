@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  title: LeetCode Clone API
+  description: API for programming problems platform
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+tags:
+  - name: auth
+    description: Authentication operations
+  - name: problems
+    description: Problem operations
+  - name: solutions
+    description: Solution operations
+  - name: comments
+    description: Comment operations
+  - name: tags
+    description: Tag operations
+  - name: users
+    description: User operations
+
+paths:
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUser"
+      responses:
+        201:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        400:
+          description: Bad request
+        409:
+          description: Email already in use
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUser"
+      responses:
+        200:
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        401:
+          description: Invalid credentials
+
+  /problems:
+    get:
+      tags: [problems]
+      summary: Get all problems
+      parameters:
+        - in: query
+          name: difficulty
+          schema:
+            type: string
+            enum: [easy, medium, hard]
+          description: Filter by difficulty
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Comma-separated list of tags to filter by
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search term for problem title
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        200:
+          description: List of problems
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pages:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Problem"
+
+components:
+  schemas:
+    RegisterUser:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 30
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        role:
+          type: string
+          enum: [user, admin, interviewer]
+          default: user
+
+    LoginUser:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            username:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+        token:
+          type: string
+
+    Problem:
+      type: object
+      required:
+        - title
+        - description
+        - difficulty
+        - testCases
+        - constraints
+        - examples
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        testCases:
+          type: array
+          items:
+            type: object
+            properties:
+              input:
+                type: string
+              output:
+                type: string
+        constraints:
+          type: string
+        examples:
+          type: array
+          items:
+            type: object
+            properties:
+              input:
+                type: string
+              output:
+                type: string
+              explanation:
+                type: string
+        hints:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
