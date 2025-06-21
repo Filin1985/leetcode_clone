@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
-const { jwtSecret, jwtExpiration } = require('../config/auth');
+const { jwtSecret, jwtExpiration } = require('../../config/auth');
 const { BadRequestError, UnauthorizedError } = require('../errors');
 
 const register = async (req, res, next) => {

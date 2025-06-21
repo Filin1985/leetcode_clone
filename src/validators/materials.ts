@@ -1,6 +1,6 @@
-// validators/materials.js
-const {body} = require("express-validator")
-const {BadRequestError} = require("../errors")
+import type {Request, Response, NextFunction} from "express";
+const {body, validationResult} = require("express-validator");
+const {BadRequestError} = require("../errors");
 
 const validateMaterial = [
   body("title")
@@ -18,13 +18,13 @@ const validateMaterial = [
 
   body("url").optional().isURL().withMessage("Invalid URL format"),
 
-  (req, res, next) => {
-    const errors = validationResult(req)
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new BadRequestError(errors.array()[0].msg)
+      throw new BadRequestError(errors.array()[0].msg);
     }
-    next()
+    next();
   },
-]
+];
 
-module.exports = {validateMaterial}
+module.exports = {validateMaterial};

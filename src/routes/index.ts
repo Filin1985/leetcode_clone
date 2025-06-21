@@ -1,13 +1,14 @@
-const express = require('express');
+import express from 'express';
+import problemRoutes from './problems.ts';
+import solutionRoutes from './solutions.ts';
+import commentRoutes from './comments.ts';
+import tagRoutes from './tags.ts';
+import materialRoutes from './materials.ts';
+import userRoutes from './users.ts';
+import authRoutes from './auth.ts';
+import {authenticate, authorize} from '../middlewares/auth.js';
+
 const router = express.Router();
-const authRoutes = require('./auth');
-const problemRoutes = require('./problems');
-const solutionRoutes = require('./solutions');
-const commentRoutes = require('./comments');
-const tagRoutes = require('./tags');
-const materialRoutes = require('./materials');
-const userRoutes = require('./users');
-const { authenticate, authorize } = require('../middlewares/auth');
 
 // Public routes
 router.use('/auth', authRoutes);

@@ -1,6 +1,6 @@
-// validators/comments.js
-const {body} = require("express-validator")
-const {BadRequestError} = require("../errors")
+import type {Request, Response, NextFunction} from "express";
+const {body, validationResult} = require("express-validator");
+const {BadRequestError} = require("../errors");
 
 const validateComment = [
   body("problemId").isInt().withMessage("Invalid problem ID"),
@@ -14,13 +14,13 @@ const validateComment = [
     .optional()
     .isInt({min: 1, max: 5})
     .withMessage("Rating must be between 1 and 5"),
-  (req, res, next) => {
-    const errors = validationResult(req)
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new BadRequestError(errors.array()[0].msg)
+      throw new BadRequestError(errors.array()[0].msg);
     }
-    next()
+    next();
   },
-]
+];
 
-module.exports = {validateComment}
+module.exports = {validateComment};

@@ -1,19 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   getAllProblems,
   getProblemById,
   createProblem,
   updateProblem,
   deleteProblem
-} = require('../controllers/problems');
-const { validateProblem } = require('../validators/problems');
-const { authorize } = require('../middlewares/auth');
+} from '../controllers/problems.js';
+import { validateProblem } from '../validators/problems.ts';
+import { authorize } from '../middlewares/auth.js';
 
+const router = express.Router();
+∏
 router.get('/', getAllProblems);
 router.get('/:id', getProblemById);
 router.post('/', authorize(['admin', 'interviewer']), validateProblem, createProblem);
 router.put('/:id', authorize(['admin', 'interviewer']), validateProblem, updateProblem);
 router.delete('/:id', authorize(['admin', 'interviewer']), deleteProblem);
 
-module.exports = router;
+export default router;
