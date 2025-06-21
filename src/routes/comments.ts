@@ -4,9 +4,9 @@ import {
   getProblemComments,
   updateComment,
   deleteComment,
-} from '../controllers/comments.js';
-import { authenticate } from '../middlewares/auth.js';
-import { validateComment } from '../validators/comments.js';
+} from '../controllers/comments.ts';
+import { authenticate } from '../middlewares/auth.ts';
+import { validateComment } from '../validators/comments.ts';
 
 const router = express.Router();
 

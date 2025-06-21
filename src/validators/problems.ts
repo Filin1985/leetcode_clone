@@ -1,5 +1,5 @@
 import type {Request, Response, NextFunction} from "express";
-const {BadRequestError} = require('../errors');
+import { BadRequestError } from "../errors/index.js";
 
 const validateProblem = (req: Request, res: Response, next: NextFunction) => {
   const {title, description, difficulty, testCases, constraints, examples} = req.body;
@@ -23,4 +23,4 @@ const validateProblem = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-module.exports = {validateProblem};
+export {validateProblem};

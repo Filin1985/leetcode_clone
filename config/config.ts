@@ -1,10 +1,17 @@
-module.exports = {
+import { Sequelize, Options } from 'sequelize';
+
+interface DatabaseConfig extends Options {
+  use_env_variable?: string;
+}
+
+const config: { [key: string]: DatabaseConfig } = {
   development: {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
-    dialect: "postgres",
+    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
+    dialect: 'postgres',
     logging: false,
     dialectOptions: {
       ssl: false,
@@ -15,16 +22,13 @@ module.exports = {
     password: process.env.POSTGRES_PASSWORD || 'postgres',
     database: process.env.POSTGRES_DB || 'postgres',
     host: process.env.POSTGRES_HOST || '127.0.0.1',
-    port: process.env.POSTGRES_PORT || 5432,
+    port: process.env.POSTGRES_PORT ? Number(process.env.POSTGRES_PORT) : 5432,
     dialect: 'postgres',
     logging: false
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: "postgres",
+    use_env_variable: 'DATABASE_URL',
+    dialect: 'postgres',
     logging: false,
     dialectOptions: {
       ssl: {
@@ -33,4 +37,6 @@ module.exports = {
       },
     },
   },
-}
+};
+
+export default config;

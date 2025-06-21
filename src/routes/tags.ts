@@ -5,9 +5,9 @@ import {
   updateTag,
   deleteTag,
   getProblemsByTag,
-} from '../controllers/tags.js';
-import { authenticate, authorize } from '../middlewares/auth.js';
-import { validateTag } from '../validators/tags.js';
+} from '../controllers/tags.ts';
+import { authenticate, authorize } from '../middlewares/auth.ts';
+import { validateTag } from '../validators/tags.ts';
 
 const router = express.Router();
 

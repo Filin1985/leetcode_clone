@@ -1,9 +1,29 @@
-const jwt = require('jsonwebtoken');
-const { User } = require('../models');
-const { jwtSecret, jwtExpiration } = require('../../config/auth');
-const { BadRequestError, UnauthorizedError } = require('../errors');
+import jwt from 'jsonwebtoken';
+import User from '../models/index.ts';
+import jwtSecret from '../../config/auth.ts';
+import jwtExpiration from '../../config/auth.ts';
+import { BadRequestError, UnauthorizedError } from '../errors/index.ts';
+import type { Request, Response, NextFunction } from 'express';
 
-const register = async (req, res, next) => {
+interface UserPayload {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+}
+
+interface AuthResponse {
+  user: UserPayload;
+  token: string;
+}
+
+interface JwtPayload {
+  userId: string;
+  role: string;
+}
+
+
+const register = async (req: Request, res: Response<AuthResponse>, next: NextFunction) => {
   try {
     const { username, email, password, role = 'user' } = req.body;
     
@@ -15,9 +35,9 @@ const register = async (req, res, next) => {
     const user = await User.create({ username, email, password, role });
     
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      jwtSecret,
-      { expiresIn: jwtExpiration }
+      { userId: user.id, role: user.role } as JwtPayload,
+      jwtSecret as unknown as jwt.Secret,
+      {expiresIn: jwtExpiration} as unknown as jwt.SignOptions
     );
 
     res.status(201).json({
@@ -34,7 +54,7 @@ const register = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
+const login = async (req: Request, res: Response<AuthResponse>, next: NextFunction) => {
   try {
     const { email, password } = req.body;
     
@@ -49,9 +69,9 @@ const login = async (req, res, next) => {
     }
 
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      jwtSecret,
-      { expiresIn: jwtExpiration }
+      { userId: user.id, role: user.role } as JwtPayload,
+      jwtSecret as unknown as jwt.Secret,
+      {expiresIn: jwtExpiration} as unknown as jwt.SignOptions
     );
 
     res.json({
@@ -68,13 +88,13 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res, next) => {
+const logout = async (req: Request, res: Response<{ message: string }>, next: NextFunction) => {
   try {
-    // В реальном приложении здесь может быть инвалидация токена
+    // In a real app, you might invalidate the token here
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { register, login, logout };
+export { register, login, logout };

@@ -6,7 +6,7 @@ import tagRoutes from './tags.ts';
 import materialRoutes from './materials.ts';
 import userRoutes from './users.ts';
 import authRoutes from './auth.ts';
-import {authenticate, authorize} from '../middlewares/auth.js';
+import {authenticate, authorize} from '../middlewares/auth.ts';
 
 const router = express.Router();
 
@@ -21,4 +21,4 @@ router.use('/tags', authenticate, tagRoutes);
 router.use('/materials', authenticate, materialRoutes);
 router.use('/users', authenticate, authorize(['admin', 'interviewer']), userRoutes);
 
-module.exports = router;
+export default router;

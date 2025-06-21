@@ -1,20 +1,48 @@
-const { Problem, Tag, Comment, User } = require('../models');
-const { NotFoundError, BadRequestError } = require('../errors');
+import Problem from '../models/index.ts';
+import Tag from '../models/index.ts';
+import Comment from '../models/index.ts';
+import User from '../models/index.ts';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../errors/index.ts';
+import type { Request, Response, NextFunction } from 'express';
+import { Op } from 'sequelize';
+import {TagAttributes} from '../models/tag.ts';
+import {CommentAttributes} from './comments.ts';
 
-const getAllProblems = async (req, res, next) => {
+interface ProblemResponse {
+  total: number;
+  page: number;
+  pages: number;
+  data: ProblemAttributes[];
+}
+
+interface ProblemAttributes {
+  id: number;
+  title: string;
+  description: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  testCases: object;
+  constraints: string;
+  examples: object;
+  hints?: string;
+  userId: number;
+  tags?: TagAttributes[];
+  comments?: CommentAttributes[];
+}
+
+const getAllProblems = async (req: Request, res: Response<ProblemResponse>, next: NextFunction) => {
   try {
-    const { difficulty, tags, search, page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit;
+    const { difficulty, tags, search, page = '1', limit = '10' } = req.query;
+    const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
     
-    const where = {};
+    const where: any = {};
     if (difficulty) where.difficulty = difficulty;
     if (search) where.title = { [Op.iLike]: `%${search}%` };
     
-    const include = [];
+    const include: any[] = [];
     if (tags) {
       include.push({
         model: Tag,
-        where: { name: { [Op.in]: tags.split(',') } },
+        where: { name: { [Op.in]: (tags as string).split(',') } },
         through: { attributes: [] }
       });
     }
@@ -22,15 +50,15 @@ const getAllProblems = async (req, res, next) => {
     const problems = await Problem.findAndCountAll({
       where,
       include,
-      limit,
+      limit: parseInt(limit as string),
       offset,
       order: [['createdAt', 'DESC']]
     });
     
     res.json({
       total: problems.count,
-      page: parseInt(page),
-      pages: Math.ceil(problems.count / limit),
+      page: parseInt(page as string),
+      pages: Math.ceil(problems.count / parseInt(limit as string)),
       data: problems.rows
     });
   } catch (error) {
@@ -38,7 +66,7 @@ const getAllProblems = async (req, res, next) => {
   }
 };
 
-const getProblemById = async (req, res, next) => {
+const getProblemById = async (req: Request, res: Response<ProblemAttributes>, next: NextFunction) => {
   try {
     const problem = await Problem.findByPk(req.params.id, {
       include: [
@@ -60,9 +88,13 @@ const getProblemById = async (req, res, next) => {
   }
 };
 
-const createProblem = async (req, res, next) => {
+const createProblem = async (req: Request, res: Response<ProblemAttributes>, next: NextFunction) => {
   try {
     const { title, description, difficulty, testCases, constraints, examples, hints, tags } = req.body;
+    
+    if (!title || !description || !difficulty || !testCases || !constraints || !examples) {
+      throw new BadRequestError('Missing required fields');
+    }
     
     const problem = await Problem.create({
       title,
@@ -72,7 +104,7 @@ const createProblem = async (req, res, next) => {
       constraints,
       examples,
       hints,
-      userId: req.user.userId
+      userId: req.user?.userId
     });
     
     if (tags && tags.length) {
@@ -86,7 +118,7 @@ const createProblem = async (req, res, next) => {
   }
 };
 
-const updateProblem = async (req, res, next) => {
+const updateProblem = async (req: Request, res: Response<ProblemAttributes>, next: NextFunction) => {
   try {
     const problem = await Problem.findByPk(req.params.id);
     
@@ -94,20 +126,20 @@ const updateProblem = async (req, res, next) => {
       throw new NotFoundError('Problem not found');
     }
     
-    if (problem.userId !== req.user.userId && req.user.role !== 'admin') {
+    if (problem.userId !== req.user?.userId && req.user?.role !== 'admin') {
       throw new ForbiddenError('Not authorized to update this problem');
     }
     
     const { title, description, difficulty, testCases, constraints, examples, hints, tags } = req.body;
     
     await problem.update({
-      title: title || problem.title,
-      description: description || problem.description,
-      difficulty: difficulty || problem.difficulty,
-      testCases: testCases || problem.testCases,
-      constraints: constraints || problem.constraints,
-      examples: examples || problem.examples,
-      hints: hints || problem.hints
+      title: title ?? problem.title,
+      description: description ?? problem.description,
+      difficulty: difficulty ?? problem.difficulty,
+      testCases: testCases ?? problem.testCases,
+      constraints: constraints ?? problem.constraints,
+      examples: examples ?? problem.examples,
+      hints: hints ?? problem.hints
     });
     
     if (tags) {
@@ -121,7 +153,7 @@ const updateProblem = async (req, res, next) => {
   }
 };
 
-const deleteProblem = async (req, res, next) => {
+const deleteProblem = async (req: Request, res: Response<{ message: string }>, next: NextFunction) => {
   try {
     const problem = await Problem.findByPk(req.params.id);
     
@@ -129,7 +161,7 @@ const deleteProblem = async (req, res, next) => {
       throw new NotFoundError('Problem not found');
     }
     
-    if (problem.userId !== req.user.userId && req.user.role !== 'admin') {
+    if (problem.userId !== req.user?.userId && req.user?.role !== 'admin') {
       throw new ForbiddenError('Not authorized to delete this problem');
     }
     
@@ -140,7 +172,7 @@ const deleteProblem = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   getAllProblems,
   getProblemById,
   createProblem,

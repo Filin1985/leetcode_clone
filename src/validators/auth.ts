@@ -1,14 +1,16 @@
-import type {Request, Response, NextFunction} from "express";
-import type {ValidationError} from "express-validator";
-import {body, validationResult} from "express-validator"
-import {BadRequestError} from "../errors"
 
-export const validateRegister = [
+import { Request, Response, NextFunction } from "express";
+import { ValidationError } from "express-validator";
+import { BadRequestError } from "../errors/index.js";
+import expressValidator from "express-validator";
+const { body, validationResult } = require('express-validator');
+
+const validateRegister = [
   body("username")
     .trim()
     .notEmpty()
     .withMessage("Username is required")
-    .isLength({min: 3, max: 30})
+    .isLength({ min: 3, max: 30 })
     .withMessage("Username must be between 3-30 characters"),
 
   body("email")
@@ -22,7 +24,7 @@ export const validateRegister = [
     .trim()
     .notEmpty()
     .withMessage("Password is required")
-    .isLength({min: 6})
+    .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
 
   (req: Request, res: Response, next: NextFunction) => {
@@ -35,7 +37,7 @@ export const validateRegister = [
   },
 ];
 
-export const validateLogin = [
+const validateLogin = [
   body("email")
     .trim()
     .notEmpty()
@@ -54,3 +56,5 @@ export const validateLogin = [
     next();
   },
 ];
+
+export { validateRegister, validateLogin };

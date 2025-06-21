@@ -1,6 +1,6 @@
 import type {Request, Response, NextFunction} from "express";
 const {body, validationResult} = require("express-validator");
-const {BadRequestError} = require("../errors");
+import { BadRequestError } from "../errors/index.js";
 
 const validateComment = [
   body("problemId").isInt().withMessage("Invalid problem ID"),
@@ -23,4 +23,4 @@ const validateComment = [
   },
 ];
 
-module.exports = {validateComment};
+export {validateComment};

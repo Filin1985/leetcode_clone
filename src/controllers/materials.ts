@@ -1,11 +1,37 @@
-// controllers/materials.js
-const {Material, User} = require("../models")
-const {NotFoundError, ForbiddenError, BadRequestError} = require("../errors")
+import Material from "../models/index.ts"
+import User from "../models/index.ts"
+import {
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from "../errors/index.ts"
+import type {Request, Response, NextFunction} from "express"
+import {Op} from "sequelize"
 
-const getAllMaterials = async (req, res, next) => {
+interface MaterialAttributes {
+  id: number;
+  title: string;
+  content: string;
+  type: "article" | "video" | "cheatsheet";
+  url?: string;
+  userId: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface UserAttributes {
+  id: number;
+  username: string;
+}
+
+const getAllMaterials = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const {type, search} = req.query
-    const where = {}
+    const where: any = {}
 
     if (type) where.type = type
     if (search) where.title = {[Op.iLike]: `%${search}%`}
@@ -27,7 +53,11 @@ const getAllMaterials = async (req, res, next) => {
   }
 }
 
-const createMaterial = async (req, res, next) => {
+const createMaterial = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const {title, content, type, url} = req.body
 
@@ -40,7 +70,7 @@ const createMaterial = async (req, res, next) => {
       content,
       type,
       url,
-      userId: req.user.userId,
+      userId: req?.user?.userId,
     })
 
     res.status(201).json(material)
@@ -49,7 +79,11 @@ const createMaterial = async (req, res, next) => {
   }
 }
 
-const getMaterialById = async (req, res, next) => {
+const getMaterialById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const material = await Material.findByPk(req.params.id, {
       include: [
@@ -70,7 +104,11 @@ const getMaterialById = async (req, res, next) => {
   }
 }
 
-const updateMaterial = async (req, res, next) => {
+const updateMaterial = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const material = await Material.findByPk(req.params.id)
 
@@ -78,7 +116,7 @@ const updateMaterial = async (req, res, next) => {
       throw new NotFoundError("Material not found")
     }
 
-    if (material.userId !== req.user.userId && req.user.role !== "admin") {
+    if (material.userId !== req.user?.userId && req.user?.role !== "admin") {
       throw new ForbiddenError("Not authorized to update this material")
     }
 
@@ -91,7 +129,11 @@ const updateMaterial = async (req, res, next) => {
   }
 }
 
-const deleteMaterial = async (req, res, next) => {
+const deleteMaterial = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const material = await Material.findByPk(req.params.id)
 
@@ -99,7 +141,7 @@ const deleteMaterial = async (req, res, next) => {
       throw new NotFoundError("Material not found")
     }
 
-    if (material.userId !== req.user.userId && req.user.role !== "admin") {
+    if (material.userId !== req.user?.userId && req.user?.role !== "admin") {
       throw new ForbiddenError("Not authorized to delete this material")
     }
 
@@ -110,10 +152,11 @@ const deleteMaterial = async (req, res, next) => {
   }
 }
 
-module.exports = {
+export {
   getAllMaterials,
   createMaterial,
   getMaterialById,
   updateMaterial,
   deleteMaterial,
 }
+

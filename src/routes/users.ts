@@ -5,9 +5,9 @@ import {
   updateUserRole,
   updateUserRating,
   deactivateUser,
-} from '../controllers/users.js';
-import { authenticate, authorize } from '../middlewares/auth.js';
-import { validateUserUpdate } from '../validators/users.js';
+} from '../controllers/users.ts';
+import { authenticate, authorize } from '../middlewares/auth.ts';
+import { validateUserUpdate } from '../validators/users.ts';
 
 const router = express.Router();
 

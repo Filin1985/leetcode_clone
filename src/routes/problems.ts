@@ -5,12 +5,12 @@ import {
   createProblem,
   updateProblem,
   deleteProblem
-} from '../controllers/problems.js';
+} from '../controllers/problems.ts';
 import { validateProblem } from '../validators/problems.ts';
-import { authorize } from '../middlewares/auth.js';
+import { authorize } from '../middlewares/auth.ts';
 
 const router = express.Router();
-∏
+
 router.get('/', getAllProblems);
 router.get('/:id', getProblemById);
 router.post('/', authorize(['admin', 'interviewer']), validateProblem, createProblem);

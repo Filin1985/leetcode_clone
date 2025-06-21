@@ -6,8 +6,8 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import routes from "./routes/index.ts";
 import dotenv from "dotenv";
-import { errorHandler } from "./middlewares/error.js";
-import { sequelize } from "./models/index.js";
+import { errorHandler } from "./middlewares/error.ts";
+import sequelize from "./models/index.ts";
 
 const app = express();
 
@@ -41,4 +41,4 @@ sequelize
     console.error("Database sync error:", err);
   });
 
-module.exports = app;
+export default app;

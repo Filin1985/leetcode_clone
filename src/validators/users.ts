@@ -1,6 +1,6 @@
 import type {Request, Response, NextFunction} from "express";
 const {body, validationResult} = require("express-validator");
-const {BadRequestError} = require("../errors");
+import { BadRequestError } from "../errors/index.js";
 
 const validateUserUpdate = [
   body("role")
@@ -22,4 +22,4 @@ const validateUserUpdate = [
   },
 ];
 
-module.exports = {validateUserUpdate};
+export {validateUserUpdate};

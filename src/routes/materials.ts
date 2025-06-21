@@ -7,8 +7,8 @@ import {
   updateMaterial,
   deleteMaterial
 } from '../controllers/materials.js';
-import { authenticate } from '../middlewares/auth.js';
-import { validateMaterial } from '../validators/materials.js';
+import { authenticate } from '../middlewares/auth.ts';
+import { validateMaterial } from '../validators/materials.ts';
 
 const router = express.Router();
 

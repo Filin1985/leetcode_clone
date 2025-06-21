@@ -1,6 +1,7 @@
-const { DataTypes } = require('sequelize');
+import { DataTypes, Sequelize } from 'sequelize';
 
-module.exports = (sequelize) => {
+
+export default (sequelize: Sequelize) => {
   const Comment = sequelize.define('Comment', {
     content: {
       type: DataTypes.TEXT,
@@ -14,6 +15,6 @@ module.exports = (sequelize) => {
       }
     }
   });
-
   return Comment;
 };
+
