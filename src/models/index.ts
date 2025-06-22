@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { Sequelize, DataTypes } from 'sequelize';
 import config from '../../config/config.ts';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -31,65 +31,77 @@ if (config[env]?.use_env_variable) {
     username: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
     database: POSTGRES_DB,
-    dialect: 'postgres', // Changed from POSTGRES_DB to 'postgres'
+    dialect: 'postgres',
     logging: false,
   });
 }
 
 // Import models dynamically
-fs.readdirSync(__dirname)
+const modelFiles = fs.readdirSync(__dirname)
   .filter((file) => (
     file.indexOf('.') !== 0 &&
     file !== basename &&
-    file.slice(-3) === '.js' &&
-    !file.includes('.test.js')
-  ))
-  .forEach(async (file) => {
-    const modelPath = path.join(__dirname, file);
-    const modelModule = require(modelPath);
-    const model = modelModule.default(sequelize, DataTypes);
-    db[model.name] = model;
-  });
-  console.log('Loaded models:', Object.keys(db));
+    (file.slice(-3) === '.ts' || file.slice(-3) === '.js') && // Check for both .ts and .js
+    !file.includes('.test.')
+  ));
+
+// Use Promise.all to handle async imports
+await Promise.all(modelFiles.map(async (file) => {
+  const modelPath = path.join(__dirname, file);
+  const modelModule = await import(modelPath); // Use dynamic import instead of require
+  const model = modelModule.default(sequelize, DataTypes);
+  db[model.name] = model;
+}));
+
 // Set up associations
 Object.keys(db).forEach(modelName => {
-  console.log(modelName)
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
-
 // Define explicit associations
-db.User.hasMany(db.Solution, { foreignKey: 'userId' });
-db.Solution.belongsTo(db.User, { foreignKey: 'userId' });
+if (db.User && db.Solution) {
+  db.User.hasMany(db.Solution, { foreignKey: 'userId' });
+  db.Solution.belongsTo(db.User, { foreignKey: 'userId' });
+}
 
-db.Problem.hasMany(db.Solution, { foreignKey: 'problemId' });
-db.Solution.belongsTo(db.Problem, { foreignKey: 'problemId' });
+if (db.Problem && db.Solution) {
+  db.Problem.hasMany(db.Solution, { foreignKey: 'problemId' });
+  db.Solution.belongsTo(db.Problem, { foreignKey: 'problemId' });
+}
 
-db.User.hasMany(db.Comment, { foreignKey: 'userId' });
-db.Comment.belongsTo(db.User, { foreignKey: 'userId' });
+if (db.User && db.Comment) {
+  db.User.hasMany(db.Comment, { foreignKey: 'userId' });
+  db.Comment.belongsTo(db.User, { foreignKey: 'userId' });
+}
 
-db.Problem.hasMany(db.Comment, { foreignKey: 'problemId' });
-db.Comment.belongsTo(db.Problem, { foreignKey: 'problemId' });
+if (db.Problem && db.Comment) {
+  db.Problem.hasMany(db.Comment, { foreignKey: 'problemId' });
+  db.Comment.belongsTo(db.Problem, { foreignKey: 'problemId' });
+}
 
-db.Problem.belongsToMany(db.Tag, {
-  through: 'ProblemTags',
-  foreignKey: 'problemId',
-});
-db.Tag.belongsToMany(db.Problem, {
-  through: 'ProblemTags',
-  foreignKey: 'tagId',
-});
+if (db.Problem && db.Tag) {
+  db.Problem.belongsToMany(db.Tag, {
+    through: 'ProblemTags',
+    foreignKey: 'problemId',
+  });
+  db.Tag.belongsToMany(db.Problem, {
+    through: 'ProblemTags',
+    foreignKey: 'tagId',
+  });
+}
 
-db.User.belongsToMany(db.Material, {
-  through: 'UserMaterials',
-  foreignKey: 'userId',
-});
-db.Material.belongsToMany(db.User, {
-  through: 'UserMaterials',
-  foreignKey: 'materialId',
-});
+if (db.User && db.Material) {
+  db.User.belongsToMany(db.Material, {
+    through: 'UserMaterials',
+    foreignKey: 'userId',
+  });
+  db.Material.belongsToMany(db.User, {
+    through: 'UserMaterials',
+    foreignKey: 'materialId',
+  });
+}
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

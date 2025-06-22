@@ -2,8 +2,8 @@
 import { Request, Response, NextFunction } from "express";
 import { ValidationError } from "express-validator";
 import { BadRequestError } from "../errors/index.js";
-import expressValidator from "express-validator";
-const { body, validationResult } = require('express-validator');
+// @ts-ignore
+import {body, validationResult} from "express-validator"
 
 const validateRegister = [
   body("username")

@@ -1,5 +1,6 @@
 import type {Request, Response, NextFunction} from "express";
-const {body, validationResult} = require("express-validator");
+// @ts-ignore
+import {body, validationResult} from "express-validator"
 import { BadRequestError } from "../errors/index.js";
 
 const validateUserUpdate = [

@@ -7,7 +7,9 @@ import YAML from "yamljs";
 import routes from "./routes/index.ts";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error.ts";
-import sequelize from "./models/index.ts";
+
+import db from "./models/index.ts";
+const { sequelize } = db;
 
 const app = express();
 
