@@ -21,7 +21,7 @@ interface UserAttributes {
 
 const createComment = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { problemId, content, rating } = req.body;
+    const { problemId, content, rating }: CommentAttributes = req.body;
 
     const problem = await Problem.findByPk(problemId);
     if (!problem) {

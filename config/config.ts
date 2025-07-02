@@ -1,10 +1,14 @@
 import { Sequelize, Options } from 'sequelize';
 
-interface DatabaseConfig extends Options {
+interface DatabaseConfigValue extends Options {
   use_env_variable?: string;
 }
 
-const config: { [key: string]: DatabaseConfig } = {
+interface DatabaseConfig {
+  [key: string]: DatabaseConfigValue
+}
+
+const config: DatabaseConfig = {
   development: {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

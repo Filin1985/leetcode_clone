@@ -35,7 +35,7 @@ interface PaginationQuery {
 
 const getAllUsers = async (req: Request<{}, {}, {}, PaginationQuery>, res: Response<UserResponse>, next: NextFunction) => {
   try {
-    const { role, search, page = 1, limit = 20 } = req.query;
+    const { role, search, page = 1, limit = 20 }: PaginationQuery = req.query;
     const offset = (page - 1) * limit;
 
     const where: any = {};

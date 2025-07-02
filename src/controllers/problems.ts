@@ -4,7 +4,7 @@ import Comment from '../models/index.ts';
 import User from '../models/index.ts';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../errors/index.ts';
 import type { Request, Response, NextFunction } from 'express';
-import { Op } from 'sequelize';
+import { Includeable, Model, ModelStatic, ModelType, Op, WhereOptions } from 'sequelize';
 import {TagAttributes} from '../models/tag.ts';
 import {CommentAttributes} from './comments.ts';
 
@@ -29,20 +29,36 @@ interface ProblemAttributes {
   comments?: CommentAttributes[];
 }
 
+interface ProblemQuery {
+  difficulty?: 'easy' | 'medium' | 'hard';
+  tags?: string;
+  search?: string;
+  page?: string;
+  limit?: string;
+}
+
 const getAllProblems = async (req: Request, res: Response<ProblemResponse>, next: NextFunction) => {
   try {
-    const { difficulty, tags, search, page = '1', limit = '10' } = req.query;
-    const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const {
+      difficulty,
+      tags,
+      search,
+      page = '1',
+      limit = '10',
+    }: ProblemQuery = req.query;
+    const pageNumber = Number.isNaN(Number(page)) ? 1 : Number(page);
+    const limitNumber = Number.isNaN(Number(limit)) ? 10 : Number(limit);
+    const offset = (pageNumber - 1) * limitNumber;
     
-    const where: any = {};
+    const where: WhereOptions<ProblemAttributes> = {};
     if (difficulty) where.difficulty = difficulty;
     if (search) where.title = { [Op.iLike]: `%${search}%` };
     
-    const include: any[] = [];
+    const include: Includeable[] = [];
     if (tags) {
       include.push({
-        model: Tag,
-        where: { name: { [Op.in]: (tags as string).split(',') } },
+        model: Tag as ModelStatic<Model<TagAttributes>>,
+        where: { name: { [Op.in]: tags.split(',') } },
         through: { attributes: [] }
       });
     }
@@ -57,8 +73,8 @@ const getAllProblems = async (req: Request, res: Response<ProblemResponse>, next
     
     res.json({
       total: problems.count,
-      page: parseInt(page as string),
-      pages: Math.ceil(problems.count / parseInt(limit as string)),
+      page: parseInt(page),
+      pages: Math.ceil(problems.count / parseInt(limit)),
       data: problems.rows
     });
   } catch (error) {
@@ -90,7 +106,7 @@ const getProblemById = async (req: Request, res: Response<ProblemAttributes>, ne
 
 const createProblem = async (req: Request, res: Response<ProblemAttributes>, next: NextFunction) => {
   try {
-    const { title, description, difficulty, testCases, constraints, examples, hints, tags } = req.body;
+    const { title, description, difficulty, testCases, constraints, examples, hints, tags }: ProblemAttributes = req.body;
     
     if (!title || !description || !difficulty || !testCases || !constraints || !examples) {
       throw new BadRequestError('Missing required fields');
@@ -130,7 +146,7 @@ const updateProblem = async (req: Request, res: Response<ProblemAttributes>, nex
       throw new ForbiddenError('Not authorized to update this problem');
     }
     
-    const { title, description, difficulty, testCases, constraints, examples, hints, tags } = req.body;
+    const { title, description, difficulty, testCases, constraints, examples, hints, tags }: ProblemAttributes = req.body;
     
     await problem.update({
       title: title ?? problem.title,

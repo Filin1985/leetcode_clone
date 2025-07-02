@@ -6,7 +6,7 @@ import {
   BadRequestError,
 } from "../errors/index.ts"
 import type {Request, Response, NextFunction} from "express"
-import {Op} from "sequelize"
+import {Op, WhereOptions} from "sequelize"
 
 interface MaterialAttributes {
   id: number;
@@ -31,9 +31,9 @@ const getAllMaterials = async (
 ) => {
   try {
     const {type, search} = req.query
-    const where: any = {}
+    const where: WhereOptions<MaterialAttributes> = {}
 
-    if (type) where.type = type
+    if (type) where.type = type as "article" | "video" | "cheatsheet"
     if (search) where.title = {[Op.iLike]: `%${search}%`}
 
     const materials = await Material.findAll({
@@ -59,7 +59,7 @@ const createMaterial = async (
   next: NextFunction
 ) => {
   try {
-    const {title, content, type, url} = req.body
+    const {title, content, type, url}: MaterialAttributes = req.body
 
     if (!title || !content || !type) {
       throw new BadRequestError("Title, content and type are required")
