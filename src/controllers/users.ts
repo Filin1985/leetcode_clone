@@ -4,7 +4,7 @@ import Solution from "../models/index.ts";
 import Comment from "../models/index.ts";
 import { NotFoundError, ForbiddenError, BadRequestError } from "../errors/index.ts";
 import type { Request, Response, NextFunction } from 'express';
-import { Op } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
 import {ProblemAttributes} from "../models/problem.ts";
 import {SolutionAttributes} from "../models/solution.ts";
 
@@ -17,6 +17,16 @@ interface UserProfile {
   createdAt: Date;
   createdProblems?: ProblemAttributes[];
   Solutions?: SolutionAttributes[];
+}
+
+interface UserAttributes {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  rating: number;
+  createdAt: Date;
+  isActive: boolean;
 }
 
 interface UserResponse {
@@ -38,15 +48,18 @@ const getAllUsers = async (req: Request<{}, {}, {}, PaginationQuery>, res: Respo
     const { role, search, page = 1, limit = 20 }: PaginationQuery = req.query;
     const offset = (page - 1) * limit;
 
-    const where: any = {};
-    if (role) where.role = role;
-    if (search) {
-      where[Op.or] = [
-        { username: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } },
-      ];
-    }
-
+    const where: WhereOptions<UserAttributes> = {
+      ...(role ? { role } : {}),
+      ...(search
+        ? {
+            [Op.or]: [
+              { username: { [Op.iLike]: `%${search}%` } },
+              { email: { [Op.iLike]: `%${search}%` } },
+            ],
+          }
+        : {}),
+    };
+    
     const users = await User.findAndCountAll({
       where,
       attributes: ["id", "username", "email", "role", "rating", "createdAt"],

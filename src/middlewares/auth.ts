@@ -6,7 +6,7 @@ import type { Request, Response, NextFunction } from 'express';
 interface UserPayload {
   id: string;
   role: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 declare module 'express' {
@@ -15,16 +15,17 @@ declare module 'express' {
   }
 }
 
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
+const authenticate = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+
     if (!token) {
       throw new UnauthorizedError('Authentication required');
     }
 
-    const decoded = jwt.verify(token, jwtSecret as any) as unknown as UserPayload;
-    req.user = decoded;
+    const decoded = jwt.verify(token, jwtSecret.jwtSecret);
+    req.user = decoded as UserPayload;
+
     next();
   } catch (error) {
     next(new UnauthorizedError('Invalid or expired token'));

@@ -1,8 +1,8 @@
 import db from "../models/index.ts";
 import Tag from "../models/index.ts";
 import Problem from "../models/index.ts";
-import { NotFoundError, BadRequestError } from "../errors/index.ts";
-import type { Request, Response, NextFunction } from 'express';
+import {NotFoundError, BadRequestError} from "../errors/index.ts";
+import type {Request, Response, NextFunction} from 'express';
 
 interface TagAttributes {
   id: number;
@@ -22,7 +22,7 @@ const getAllTags = async (req: Request, res: Response<TagAttributes[]>, next: Ne
       include: [{
         model: Problem,
         attributes: [],
-        through: { attributes: [] },
+        through: {attributes: []},
       }],
       attributes: [
         "id",
@@ -34,23 +34,28 @@ const getAllTags = async (req: Request, res: Response<TagAttributes[]>, next: Ne
     });
 
     res.json(tags);
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
 
 const createTag = async (req: Request, res: Response<TagAttributes>, next: NextFunction) => {
   try {
-    const { name } = req.body;
+    const {name} = req.body;
 
     if (!name) {
       throw new BadRequestError("Tag name is required");
     }
 
-    const tag = await Tag.create({ name });
+    const tag = await Tag.create({name});
     res.status(201).json(tag);
-  } catch (error: any) {
-    if (error.name === "SequelizeUniqueConstraintError") {
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "name" in error &&
+      (error as {name: string;}).name === "SequelizeUniqueConstraintError"
+    ) {
       next(new BadRequestError("Tag already exists"));
     } else {
       next(error);
@@ -65,15 +70,15 @@ const updateTag = async (req: Request, res: Response<TagAttributes>, next: NextF
       throw new NotFoundError("Tag not found");
     }
 
-    const { name } = req.body;
-    await tag.update({ name });
+    const {name} = req.body;
+    await tag.update({name});
     res.json(tag);
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
 
-const deleteTag = async (req: Request, res: Response<{ message: string }>, next: NextFunction) => {
+const deleteTag = async (req: Request, res: Response<{message: string;}>, next: NextFunction) => {
   try {
     const tag = await Tag.findByPk(req.params.id);
     if (!tag) {
@@ -81,8 +86,8 @@ const deleteTag = async (req: Request, res: Response<{ message: string }>, next:
     }
 
     await tag.destroy();
-    res.json({ message: "Tag deleted successfully" });
-  } catch (error) {
+    res.json({message: "Tag deleted successfully"});
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -92,8 +97,8 @@ const getProblemsByTag = async (req: Request, res: Response<ProblemAttributes[]>
     const tag = await Tag.findByPk(req.params.id, {
       include: [{
         model: Problem,
-        through: { attributes: [] },
-        where: { isActive: true },
+        through: {attributes: []},
+        where: {isActive: true},
       }],
     });
 
@@ -102,7 +107,7 @@ const getProblemsByTag = async (req: Request, res: Response<ProblemAttributes[]>
     }
 
     res.json(tag.Problems);
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
