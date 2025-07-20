@@ -1,7 +1,7 @@
-import db from "../models/index.ts";
-import Tag from "../models/index.ts";
-import Problem from "../models/index.ts";
-import {NotFoundError, BadRequestError} from "../errors/index.ts";
+import db from "../models/index.js";
+import Tag from "../models/index.js";
+import Problem from "../models/index.js";
+import {NotFoundError, BadRequestError} from "../errors/index.js";
 import type {Request, Response, NextFunction} from 'express';
 
 interface TagAttributes {

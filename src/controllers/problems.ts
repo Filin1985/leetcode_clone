@@ -1,12 +1,12 @@
-import Problem from '../models/index.ts';
-import Tag from '../models/index.ts';
-import Comment from '../models/index.ts';
-import User from '../models/index.ts';
-import { NotFoundError, BadRequestError, ForbiddenError } from '../errors/index.ts';
+import Problem from '../models/index.js';
+import Tag from '../models/index.js';
+import Comment from '../models/index.js';
+import User from '../models/index.js';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../errors/index.js';
 import type { Request, Response, NextFunction } from 'express';
 import { Includeable, Model, ModelStatic, ModelType, Op, WhereOptions } from 'sequelize';
-import {TagAttributes} from '../models/tag.ts';
-import {CommentAttributes} from './comments.ts';
+import {TagAttributes} from '../models/tag.js';
+import {CommentAttributes} from './comments.js';
 
 interface ProblemResponse {
   total: number;

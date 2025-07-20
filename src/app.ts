@@ -4,11 +4,11 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
-import routes from "./routes/index.ts";
+import routes from "./routes/index.js";
 import dotenv from "dotenv";
-import { errorHandler } from "./middlewares/error.ts";
+import { errorHandler } from "./middlewares/error.js";
 
-import db from "./models/index.ts";
+import db from "./models/index.js";
 const { sequelize } = db;
 
 const app = express();

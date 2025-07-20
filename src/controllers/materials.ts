@@ -1,10 +1,10 @@
-import Material from "../models/index.ts"
-import User from "../models/index.ts"
+import Material from "../models/index.js"
+import User from "../models/index.js"
 import {
   NotFoundError,
   ForbiddenError,
   BadRequestError,
-} from "../errors/index.ts"
+} from "../errors/index.js"
 import type {Request, Response, NextFunction} from "express"
 import {Op, WhereOptions} from "sequelize"
 

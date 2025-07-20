@@ -1,12 +1,11 @@
-import User from "../models/index.ts";
-import Problem from "../models/index.ts";
-import Solution from "../models/index.ts";
-import Comment from "../models/index.ts";
-import { NotFoundError, ForbiddenError, BadRequestError } from "../errors/index.ts";
+import User from "../models/index.js";
+import Problem from "../models/index.js";
+import Solution from "../models/index.js";
+import { NotFoundError, ForbiddenError, BadRequestError } from "../errors/index.js";
 import type { Request, Response, NextFunction } from 'express';
 import { Op, WhereOptions } from 'sequelize';
-import {ProblemAttributes} from "../models/problem.ts";
-import {SolutionAttributes} from "../models/solution.ts";
+import {ProblemAttributes} from "../models/problem.js";
+import {SolutionAttributes} from "../models/solution.js";
 
 interface UserProfile {
   id: number;
@@ -59,7 +58,7 @@ const getAllUsers = async (req: Request<{}, {}, {}, PaginationQuery>, res: Respo
           }
         : {}),
     };
-    
+
     const users = await User.findAndCountAll({
       where,
       attributes: ["id", "username", "email", "role", "rating", "createdAt"],

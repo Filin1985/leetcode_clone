@@ -1,4 +1,3 @@
-// routes/materials.js
 import express from 'express';
 import {
   getAllMaterials,
@@ -7,8 +6,8 @@ import {
   updateMaterial,
   deleteMaterial
 } from '../controllers/materials.js';
-import { authenticate } from '../middlewares/auth.ts';
-import { validateMaterial } from '../validators/materials.ts';
+import { authenticate } from '../middlewares/auth.js';
+import { validateMaterial } from '../validators/materials.js';
 
 const router = express.Router();
 
