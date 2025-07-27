@@ -6,7 +6,7 @@ import Problem from '../models/index.js';
 import Tag from '../models/index.js';
 import app from '../app.js';
 
-let server: Express = app;
+let server: Express = app
 
 describe('Problem API', () => {
   let adminToken: string;
