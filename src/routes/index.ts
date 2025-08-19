@@ -1,12 +1,12 @@
 import express from 'express';
-import problemRoutes from './problems.ts';
-import solutionRoutes from './solutions.ts';
-import commentRoutes from './comments.ts';
-import tagRoutes from './tags.ts';
-import materialRoutes from './materials.ts';
-import userRoutes from './users.ts';
-import authRoutes from './auth.ts';
-import {authenticate, authorize} from '../middlewares/auth.ts';
+import problemRoutes from './problems.js';
+import solutionRoutes from './solutions.js';
+import commentRoutes from './comments.js';
+import tagRoutes from './tags.js';
+import materialRoutes from './materials.js';
+import userRoutes from './users.js';
+import authRoutes from './auth.js';
+import {authenticate, authorize} from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ const router = express.Router();
 router.use('/auth', authRoutes);
 
 // Protected routes
-router.use('/problems', authenticate, problemRoutes);
+router.use('/problems', problemRoutes);
 router.use('/solutions', authenticate, solutionRoutes);
 router.use('/comments', authenticate, commentRoutes);
 router.use('/tags', authenticate, tagRoutes);

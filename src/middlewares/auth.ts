@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import jwtSecret from '../../config/auth.ts';
+import jwtSecret from '../config/auth.js';
 import { UnauthorizedError, ForbiddenError } from '../errors/index.js';
 import type { Request, Response, NextFunction } from 'express';
 

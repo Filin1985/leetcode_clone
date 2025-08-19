@@ -5,9 +5,9 @@ import {
   createProblem,
   updateProblem,
   deleteProblem
-} from '../controllers/problems.ts';
-import { validateProblem } from '../validators/problems.ts';
-import { authorize } from '../middlewares/auth.ts';
+} from '../controllers/problems.js';
+import { validateProblem } from '../validators/problems.js';
+import { authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
 

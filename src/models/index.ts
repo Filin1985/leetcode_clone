@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { Sequelize, DataTypes } from 'sequelize';
-import config from '../../config/config.ts';
+import config from '../config/config.js';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
@@ -11,6 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
+
 const db: Record<string, any> = {};
 
 const {
@@ -83,22 +84,22 @@ if (db.Problem && db.Comment) {
 
 if (db.Problem && db.Tag) {
   db.Problem.belongsToMany(db.Tag, {
-    through: 'ProblemTags',
+    through: 'problemTags',
     foreignKey: 'problemId',
   });
   db.Tag.belongsToMany(db.Problem, {
-    through: 'ProblemTags',
+    through: 'problemTags',
     foreignKey: 'tagId',
   });
 }
 
 if (db.User && db.Material) {
   db.User.belongsToMany(db.Material, {
-    through: 'UserMaterials',
+    through: 'userMaterials',
     foreignKey: 'userId',
   });
   db.Material.belongsToMany(db.User, {
-    through: 'UserMaterials',
+    through: 'userMaterials',
     foreignKey: 'materialId',
   });
 }

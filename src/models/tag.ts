@@ -5,7 +5,7 @@ export interface TagAttributes {
 }
 
 const Tag = (sequelize: Sequelize) => {
-  return sequelize.define("Tag", {
+  return sequelize.define("tags", {
     name: {
       type: DataTypes.STRING,
       allowNull: false,

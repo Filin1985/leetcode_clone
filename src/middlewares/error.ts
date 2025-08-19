@@ -1,4 +1,4 @@
-import { ApiError } from '../errors/index.ts';
+import { ApiError } from '../errors/index.js';
 import type {Request, Response, NextFunction} from "express";
 
 interface ErrorWithStatusCode extends Error {

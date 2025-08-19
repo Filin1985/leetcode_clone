@@ -1,7 +1,7 @@
-import Comment from "../models/index.ts";
-import User from "../models/index.ts";
-import Problem from "../models/index.ts";
-import { NotFoundError, ForbiddenError } from "../errors/index.ts";
+import Comment from "../models/index.js";
+import User from "../models/index.js";
+import Problem from "../models/index.js";
+import { NotFoundError, ForbiddenError } from "../errors/index.js";
 import type { Request, Response, NextFunction } from 'express';
 
 export interface CommentAttributes {

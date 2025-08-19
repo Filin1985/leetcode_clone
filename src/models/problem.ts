@@ -8,6 +8,8 @@ export interface ProblemAttributes {
   testCases: object;
   constraints: string;
   examples: object;
+  timesSolved: number;
+  category: object;
   hints?: string;
   isActive?: boolean;
   createdAt?: Date;
@@ -24,6 +26,8 @@ class Problem extends Model<ProblemAttributes, ProblemCreationAttributes> implem
   declare testCases: object;
   declare constraints: string;
   declare examples: object;
+  declare timesSolved: number;
+  declare category: object;
   declare hints?: string;
   declare isActive: boolean;
   declare readonly createdAt: Date;
@@ -66,6 +70,14 @@ export default function initProblemModel(sequelize: Sequelize): typeof Problem {
       },
       examples: {
         type: DataTypes.JSONB,
+        allowNull: false
+      },
+      timesSolved: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      category: {
+        type: DataTypes.ENUM('array', 'promise', 'algorithm', 'interview'),
         allowNull: false
       },
       hints: {

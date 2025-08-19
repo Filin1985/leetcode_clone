@@ -3,8 +3,8 @@ import {
   submitSolution,
   getUserSolutions,
   getProblemSolutions
-} from '../controllers/solutions.ts';
-import { authenticate } from '../middlewares/auth.ts';
+} from '../controllers/solutions.js';
+import { authenticate } from '../middlewares/auth.js';
 
 const router = express.Router();
 
