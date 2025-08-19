@@ -8,7 +8,7 @@ export interface SolutionAttributes {
 }
 
 const Solution = (sequelize: Sequelize) => {
-  return sequelize.define('Solution', {
+  return sequelize.define('solutions', {
     code: {
       type: DataTypes.TEXT,
       allowNull: false

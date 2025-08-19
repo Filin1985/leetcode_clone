@@ -2,7 +2,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 
 export default (sequelize: Sequelize) => {
-  const Comment = sequelize.define('Comment', {
+  const Comment = sequelize.define('comments', {
     content: {
       type: DataTypes.TEXT,
       allowNull: false

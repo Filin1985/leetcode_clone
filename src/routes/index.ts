@@ -14,7 +14,7 @@ const router = express.Router();
 router.use('/auth', authRoutes);
 
 // Protected routes
-router.use('/problems', authenticate, problemRoutes);
+router.use('/problems', problemRoutes);
 router.use('/solutions', authenticate, solutionRoutes);
 router.use('/comments', authenticate, commentRoutes);
 router.use('/tags', authenticate, tagRoutes);

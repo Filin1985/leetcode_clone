@@ -84,22 +84,22 @@ if (db.Problem && db.Comment) {
 
 if (db.Problem && db.Tag) {
   db.Problem.belongsToMany(db.Tag, {
-    through: 'ProblemTags',
+    through: 'problemTags',
     foreignKey: 'problemId',
   });
   db.Tag.belongsToMany(db.Problem, {
-    through: 'ProblemTags',
+    through: 'problemTags',
     foreignKey: 'tagId',
   });
 }
 
 if (db.User && db.Material) {
   db.User.belongsToMany(db.Material, {
-    through: 'UserMaterials',
+    through: 'userMaterials',
     foreignKey: 'userId',
   });
   db.Material.belongsToMany(db.User, {
-    through: 'UserMaterials',
+    through: 'userMaterials',
     foreignKey: 'materialId',
   });
 }

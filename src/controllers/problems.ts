@@ -1,12 +1,11 @@
-import Problem from '../models/index.js';
-import Tag from '../models/index.js';
-import Comment from '../models/index.js';
-import User from '../models/index.js';
+
 import { NotFoundError, BadRequestError, ForbiddenError } from '../errors/index.js';
 import type { Request, Response, NextFunction } from 'express';
 import { Includeable, Model, ModelStatic, ModelType, Op, WhereOptions } from 'sequelize';
 import {TagAttributes} from '../models/tag.js';
 import {CommentAttributes} from './comments.js';
+import db from '../models/index.js';
+const { Problem, Tag, Comment, User } = db;
 
 interface ProblemResponse {
   total: number;
@@ -70,6 +69,7 @@ const getAllProblems = async (req: Request, res: Response<ProblemResponse>, next
       offset,
       order: [['createdAt', 'DESC']]
     });
+    console.log(problems);
     
     res.json({
       total: problems.count,
